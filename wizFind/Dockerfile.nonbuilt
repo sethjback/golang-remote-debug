@@ -1,0 +1,20 @@
+FROM golang:1.12.5-alpine3.9
+ENV CGO_ENABLED 0
+
+# Add our source to the correct location in the target container
+ADD . /go/src/github.com/sethjback/golang-remote-debug/wizFind
+
+# our workdir
+WORKDIR /go/src/github.com/sethjback/golang-remote-debug/wizFind
+
+# dependencies needed for delve
+RUN apk add --no-cache libc6-compat git
+
+# install devle
+RUN go get github.com/derekparker/delve/cmd/dlv
+
+# Port 8080 for the app, 40000 for delve
+EXPOSE 8080 40000
+
+# Run delve
+CMD ["dlv", "debug", "github.com/sethjback/golang-remote-debug/wizFind", "--listen=:40000", "--headless=true", "--api-version=2", "--log"]
