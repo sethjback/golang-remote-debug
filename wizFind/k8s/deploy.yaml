@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wizfind
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wizfind
+      release: dev
+  template:
+    metadata:
+      labels:
+        app: wizfind
+        release: dev
+    spec:
+      containers:
+        - name: wizfind
+          image: sjback/wizfind
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "wizfind"
+  namespace: "dev"
+spec:
+  selector:
+    app: wizfind
+    release: dev
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
